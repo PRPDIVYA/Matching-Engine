@@ -21,7 +21,7 @@ public class DirectionValidator implements ConstraintValidator<ValidateDirection
 	@Override
 	public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
 		if (Objects.isNull(value))
-			return true;
+			return false;
 		return acceptedValues.contains(value.toString());
 	}
 }

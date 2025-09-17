@@ -8,4 +8,5 @@ public interface OrderBookService {
 
 	public  Order placeOrder(String asset, BigDecimal amount,BigDecimal price , String direction);
 	public Order getOrder(long orderId);
+	public String cancelOrder(long orderId);
 }

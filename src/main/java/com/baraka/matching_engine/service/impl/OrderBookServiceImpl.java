@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,7 +61,8 @@ public class OrderBookServiceImpl implements OrderBookService {
 				.sorted(order.getDirection().equals(Direction.BUY.name()) ? Comparator.comparing(Map.Entry::getKey)
 						: Comparator.comparing(Map.Entry::getKey, Comparator.reverseOrder()))
 				.takeWhile(entry -> order.getPendingAmount().compareTo(BigDecimal.ZERO) > 0)
-				.flatMap(entry ->entry.getValue().stream().filter(ord->ord.getAsset().equals(order.getAsset()))) //Filter based on asset 
+				.flatMap(entry ->entry.getValue().stream().filter(ord->ord.getAsset().equals(order.getAsset())).filter(ord->orders.contains(ord))) //Filter based on asset 
+				// filter out the orders that are not there in orders
 				.collect(Collectors.toList())
 				.forEach(matchingOrder -> {
 					if(order.getPendingAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -80,6 +82,15 @@ public class OrderBookServiceImpl implements OrderBookService {
 	public Order getOrder(long orderId) {
 		//return from orders based on Id
 		return orders.get(orderId);
+	}
+	
+	@Override
+	public synchronized String cancelOrder(long orderId) {
+		Order order =orders.get(orderId);
+		if(Objects.isNull(order))
+			return "Order Not found";
+		orders.remove(orderId);
+		return "Order Cancelled";
 	}
 
 }

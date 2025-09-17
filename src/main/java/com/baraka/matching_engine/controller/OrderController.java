@@ -46,4 +46,9 @@ public class OrderController {
 			return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(objectMapper.convertValue(order, OrderResponse.class));
 	} 
+	
+	@PostMapping("/cancelOrder/{orderId}")
+	public ResponseEntity<String> cancelrder(@PathVariable long orderId){
+		return ResponseEntity.ok(orderBookService.cancelOrder(orderId));
+	}
 }
